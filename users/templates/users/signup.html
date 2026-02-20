@@ -1,0 +1,33 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 class="text-2xl font-bold mb-6">Create Account</h2>
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {% for field in form %}
+        <div>
+            <label class="block font-medium mb-1">{{ field.label }}</label>
+            <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" class="input-field" required>
+            {% if field.errors %}
+            <div class="text-red-600 text-sm mt-1">{{ field.errors.0 }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn-primary">Sign Up</button>
+    </form>
+    
+    <div class="text-center text-gray-500 my-4">OR</div>
+    
+    <a href="{% url 'google_login' %}">
+        <button class="btn-secondary">
+            <img src="https://www.google.com/favicon.ico" alt="Google" class="w-5 h-5">
+            <span>Continue with Google</span>
+        </button>
+    </a>
+    
+    <p class="mt-4 text-center">Already have an account? <a href="{% url 'login' %}" class="text-blue-500 hover:underline">Login</a></p>
+</div>
+{% endblock %}

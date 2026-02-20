@@ -1,0 +1,32 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 class="text-2xl font-bold mb-6">Login</h2>
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <div>
+            <label class="block font-medium mb-1">Email</label>
+            <input type="email" name="email" required class="input-field">
+        </div>
+        <div>
+            <label class="block font-medium mb-1">Password</label>
+            <input type="password" name="password" required class="input-field">
+        </div>
+        <button type="submit" class="btn-primary">Login</button>
+    </form>
+    
+    <div class="text-center text-gray-500 my-4">OR</div>
+    
+    <a href="{% url 'google_login' %}">
+        <button class="btn-secondary">
+            <img src="https://www.google.com/favicon.ico" alt="Google" class="w-5 h-5">
+            <span>Continue with Google</span>
+        </button>
+    </a>
+    
+    <p class="mt-4 text-center">Don't have an account? <a href="{% url 'signup' %}" class="text-blue-500 hover:underline">Sign Up</a></p>
+</div>
+{% endblock %}

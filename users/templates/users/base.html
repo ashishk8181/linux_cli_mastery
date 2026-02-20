@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Linux CLI Mastery{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-gray-800 text-white px-8 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Linux CLI Mastery</h1>
+        {% if user.is_authenticated %}
+        <div class="relative group">
+            {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="Avatar" class="w-10 h-10 rounded-full cursor-pointer object-cover">
+            {% else %}
+            <div class="w-10 h-10 rounded-full cursor-pointer bg-blue-500 flex items-center justify-center font-bold">
+                {{ user.first_name.0|upper }}
+            </div>
+            {% endif %}
+            <div class="hidden group-hover:block absolute right-0 mt-2 bg-white shadow-lg rounded-md min-w-[150px]">
+                <a href="{% url 'profile' %}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Profile</a>
+                <a href="{% url 'logout' %}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Logout</a>
+            </div>
+        </div>
+        {% endif %}
+    </nav>
+    
+    <div class="max-w-3xl mx-auto my-8 px-4">
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="p-3 rounded-md mb-2 {% if message.tags == 'success' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

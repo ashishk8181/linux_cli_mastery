@@ -1,0 +1,7 @@
+Django>=5.2
+Pillow>=10.0.0
+requests>=2.31.0
+
+# Tailwind CSS standalone binary included in project root
+# Run: ./tailwindcss -i users/static/css/style.css -o users/static/css/output.css --minify
+# Or use: ./build-css.sh for watch mode
