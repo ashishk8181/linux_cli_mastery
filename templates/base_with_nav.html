@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block fullcontent %}
+<body class="bg-gray-50">
+    <nav class="bg-gray-800 text-white px-8 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-8">
+            <a href="/" class="text-2xl font-bold hover:text-gray-300">Linux CLI Mastery</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'terminal' %}" class="text-gray-300 hover:text-white transition">Terminal</a>
+            <a href="{% url 'module_list' %}" class="text-gray-300 hover:text-white transition">Learn</a>
+            {% endif %}
+        </div>
+        {% if user.is_authenticated %}
+        <div class="relative group">
+            {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="Avatar" class="w-10 h-10 rounded-full cursor-pointer object-cover">
+            {% else %}
+            <div class="w-10 h-10 rounded-full cursor-pointer bg-blue-500 flex items-center justify-center font-bold">
+                {{ user.first_name.0|upper }}
+            </div>
+            {% endif %}
+            <div class="hidden group-hover:block absolute right-0 mt-2 bg-white shadow-lg rounded-md min-w-[150px]">
+                <a href="{% url 'profile' %}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Profile</a>
+                <a href="{% url 'logout' %}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Logout</a>
+            </div>
+        </div>
+        {% else %}
+        <div>
+            <a href="{% url 'login' %}" class="text-gray-300 hover:text-white transition">Login</a>
+        </div>
+        {% endif %}
+    </nav>
+    
+    {% if messages %}
+    <div class="max-w-6xl mx-auto px-4 mt-4">
+        {% for message in messages %}
+        <div class="p-3 rounded-md mb-2 {% if message.tags == 'success' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% block content %}{% endblock %}
+</body>
+{% endblock %}

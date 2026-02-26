@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "users",
     "cli",
+    "learning_modules",
 ]
 
 # ASGI setup
@@ -68,7 +69,7 @@ ROOT_URLCONF = "linux_cli_mastery.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
