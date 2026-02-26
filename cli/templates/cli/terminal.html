@@ -1,0 +1,103 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Terminal - Linux CLI Mastery{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold text-gray-800">Linux Sandbox</h2>
+        <div id="status" class="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+            Connecting...
+        </div>
+    </div>
+    <div id="terminal" class="w-full bg-black rounded-lg overflow-hidden border border-gray-700"></div>
+    <div class="mt-4 flex gap-4">
+        <button id="clear-btn" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition">Clear Terminal</button>
+        <button id="reset-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Reset Session</button>
+    </div>
+    <p class="mt-2 text-sm text-gray-500 italic">This is a private, isolated sandbox for you to practice. Your files will persist during this session.</p>
+</div>
+
+<!-- xterm.js CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+<!-- xterm.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+<!-- xterm.js Fit Addon -->
+<script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize xterm.js
+        const term = new Terminal({
+            cursorBlink: true,
+            theme: {
+                background: '#1a1a1a',
+                foreground: '#f0f0f0',
+                cursor: '#f0f0f0',
+                selectionBackground: 'rgba(255, 255, 255, 0.3)'
+            },
+            fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+            fontSize: 14,
+            rows: 24
+        });
+
+        // Initialize Fit Addon
+        const fitAddon = new FitAddon.FitAddon();
+        term.loadAddon(fitAddon);
+
+        const terminalElement = document.getElementById('terminal');
+        const statusElement = document.getElementById('status');
+        term.open(terminalElement);
+        fitAddon.fit();
+
+        // WebSocket setup
+        const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+        const wsUrl = `${wsScheme}://${window.location.host}/ws/terminal/`;
+        const socket = new WebSocket(wsUrl);
+
+        socket.onopen = () => {
+            statusElement.textContent = 'Connected';
+            statusElement.className = 'px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800';
+            // Send a newline to trigger the prompt
+            socket.send(JSON.stringify({ input: '\n' }));
+        };
+
+        socket.onclose = () => {
+            statusElement.textContent = 'Disconnected';
+            statusElement.className = 'px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800';
+            term.writeln('\r\n\x1b[1;31mConnection closed.\x1b[0m');
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.output) {
+                term.write(data.output);
+            }
+            if (data.error) {
+                term.writeln('\x1b[1;31mError: ' + data.error + '\x1b[0m');
+            }
+        };
+
+        // Handle user input
+        term.onData(data => {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ input: data }));
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            fitAddon.fit();
+        });
+
+        // Button handlers
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            term.clear();
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            window.location.reload();
+        });
+    });
+</script>
+{% endblock %}

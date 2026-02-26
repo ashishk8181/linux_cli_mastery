@@ -9,7 +9,12 @@
 </head>
 <body class="bg-gray-50">
     <nav class="bg-gray-800 text-white px-8 py-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Linux CLI Mastery</h1>
+        <div class="flex items-center gap-8">
+            <h1 class="text-2xl font-bold">Linux CLI Mastery</h1>
+            {% if user.is_authenticated %}
+            <a href="{% url 'terminal' %}" class="text-gray-300 hover:text-white transition">Terminal</a>
+            {% endif %}
+        </div>
         {% if user.is_authenticated %}
         <div class="relative group">
             {% if user.avatar %}
