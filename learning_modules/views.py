@@ -16,6 +16,9 @@ def lesson_detail(request, module_slug, lesson_slug):
     if request.user.is_authenticated:
         user_progress = UserProgress.objects.filter(user=request.user, lesson=lesson).first()
     
+    # Get all modules with lessons
+    all_modules = Module.objects.prefetch_related('lessons').all()
+    
     # Get previous and next lessons
     all_lessons = lesson.module.lessons.all().order_by('order')
     prev_lesson = all_lessons.filter(order__lt=lesson.order).last()
@@ -24,6 +27,7 @@ def lesson_detail(request, module_slug, lesson_slug):
     context = {
         'lesson': lesson,
         'module': lesson.module,
+        'all_modules': all_modules,
         'user_progress': user_progress,
         'prev_lesson': prev_lesson,
         'next_lesson': next_lesson,

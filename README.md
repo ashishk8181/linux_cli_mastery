@@ -1,4 +1,4 @@
-# Linux CLI Mastery - Users App
+# Linux CLI Mastery
 
 ## Setup Instructions
 
@@ -25,10 +25,10 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 4. Create Superuser
+### 4. Load modules
 
 ```bash
-python manage.py createsuperuser
+python3 manage.py load_module{i}
 ```
 
 ### 5. Run Server
@@ -41,6 +41,7 @@ python manage.py runserver
 
 - **Email/Password Authentication**: Users can sign up and login with email and password
 - **Google OAuth**: One-click sign in with Google account
+- **Free Integrated terminal**: Linux terminal to practice commands
 - **User Profile**: View and edit profile with avatar upload
 - **Progress Tracking**: User progress stored in JSON field
 - **Avatar Dropdown**: Click avatar in top-right to access profile and logout
