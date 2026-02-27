@@ -6,7 +6,7 @@ from .models import Module, Lesson, UserProgress
 
 def module_list(request):
     modules = Module.objects.prefetch_related('lessons').all()
-    return render(request, 'learning_modules/module_list.html', {'modules': modules})
+    return render(request, 'lessons/module_list.html', {'modules': modules})
 
 
 def lesson_detail(request, module_slug, lesson_slug):
@@ -28,7 +28,7 @@ def lesson_detail(request, module_slug, lesson_slug):
         'prev_lesson': prev_lesson,
         'next_lesson': next_lesson,
     }
-    return render(request, 'learning_modules/lesson_detail.html', context)
+    return render(request, 'lessons/lesson_detail.html', context)
 
 
 @login_required
