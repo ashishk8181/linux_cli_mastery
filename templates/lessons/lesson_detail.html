@@ -4,14 +4,33 @@
 {% block content %}
 <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
     <div class="bg-slate-800/50 border-b border-slate-700 p-6">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex items-center gap-3 mb-2">
-                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line>
-                </svg>
-                <h1 class="text-3xl font-bold">Linux CLI Mastery</h1>
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3">
+                    <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line>
+                    </svg>
+                    <h1 class="text-3xl font-bold">Linux CLI Mastery</h1>
+                </div>
+                {% if user.is_authenticated %}
+                <a href="{% url 'terminal' %}" class="text-slate-300 hover:text-white transition">Terminal</a>
+                {% endif %}
             </div>
-            <p class="text-slate-300">Master the command line for system administration and automation</p>
+            {% if user.is_authenticated %}
+            <div class="relative group">
+                {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="Avatar" class="w-10 h-10 rounded-full cursor-pointer object-cover">
+                {% else %}
+                <div class="w-10 h-10 rounded-full cursor-pointer bg-blue-500 flex items-center justify-center font-bold">
+                    {{ user.first_name.0|upper }}
+                </div>
+                {% endif %}
+                <div class="hidden group-hover:block absolute right-0 mt-2 bg-white shadow-lg rounded-md min-w-[150px] z-50">
+                    <a href="{% url 'profile' %}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Profile</a>
+                    <a href="{% url 'logout' %}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Logout</a>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 
