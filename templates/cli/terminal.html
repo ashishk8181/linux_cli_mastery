@@ -1,21 +1,76 @@
-{% extends 'base_with_nav.html' %}
+{% extends 'base.html' %}
 
 {% block title %}Terminal - Linux CLI Mastery{% endblock %}
 
 {% block content %}
-<div class="bg-white p-6 rounded-lg shadow-md">
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-bold text-gray-800">Linux Sandbox</h2>
-        <div id="status" class="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-            Connecting...
+<body class="bg-gray-900">
+    <nav class="bg-gray-800 text-white px-8 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-8">
+            <a href="/" class="text-2xl font-bold hover:text-gray-300">Linux CLI Mastery</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'terminal' %}" class="text-white font-semibold">Terminal</a>
+            <a href="{% url 'module_list' %}" class="text-gray-300 hover:text-white transition">Learn</a>
+            {% endif %}
+        </div>
+        {% if user.is_authenticated %}
+        <div class="relative group">
+            {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="Avatar" class="w-10 h-10 rounded-full cursor-pointer object-cover">
+            {% else %}
+            <div class="w-10 h-10 rounded-full cursor-pointer bg-blue-500 flex items-center justify-center font-bold">
+                {{ user.first_name.0|upper }}
+            </div>
+            {% endif %}
+            <div class="hidden group-hover:block absolute right-0 mt-2 bg-white shadow-lg rounded-md min-w-[150px]">
+                <a href="{% url 'profile' %}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Profile</a>
+                <a href="{% url 'logout' %}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Logout</a>
+            </div>
+        </div>
+        {% else %}
+        <div>
+            <a href="{% url 'login' %}" class="text-gray-300 hover:text-white transition">Login</a>
+        </div>
+        {% endif %}
+    </nav>
+
+<div style="padding: 2rem 0;">
+<div class="max-w-[70%] mx-auto h-[calc(100vh-120px)] flex flex-col">
+    <div class="bg-gradient-to-br from-[#1e1e1e] to-[#2d2d30] rounded-md shadow-[0_20px_60px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden flex-1 flex flex-col">
+        <div class="bg-gradient-to-b from-[#323233] to-[#2d2d30] border-b border-white/5 px-5 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="flex gap-2">
+                    <div class="w-3 h-3 rounded-full bg-[#ff5f56] hover:brightness-110 hover:scale-110 transition-all"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#ffbd2e] hover:brightness-110 hover:scale-110 transition-all"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#27c93f] hover:brightness-110 hover:scale-110 transition-all"></div>
+                </div>
+                <span class="text-[#cccccc] text-sm font-medium">bash - Linux Sandbox</span>
+            </div>
+            <div id="status" class="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[rgba(255,193,7,0.15)] text-[#ffc107] border border-[rgba(255,193,7,0.3)] text-xs font-semibold transition-all">
+                <div class="w-2 h-2 rounded-full bg-current animate-pulse"></div>
+                <span>Connecting...</span>
+            </div>
+        </div>
+        
+        <div class="p-4 flex-1 flex flex-col overflow-hidden">
+            <div id="terminal" class="rounded overflow-auto flex-1"></div>
+            
+            <div class="flex gap-3 mt-4 flex-shrink-0">
+                <button id="clear-btn" class="flex-1 px-5 py-2.5 rounded text-sm font-semibold border flex items-center justify-center gap-2 bg-[rgba(108,117,125,0.15)] text-[#adb5bd] border-[rgba(108,117,125,0.3)] hover:bg-[rgba(108,117,125,0.25)] hover:border-[rgba(108,117,125,0.5)] hover:-translate-y-px transition-all cursor-pointer">
+                    <span>⌫</span>
+                    <span>Clear Terminal</span>
+                </button>
+                <button id="reset-btn" class="flex-1 px-5 py-2.5 rounded text-sm font-semibold border flex items-center justify-center gap-2 bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white border-white/10 hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(102,126,234,0.4)] transition-all cursor-pointer">
+                    <span>↻</span>
+                    <span>Reset Session</span>
+                </button>
+            </div>
+            
+            <div class="mt-3 px-4 py-3 bg-[rgba(33,150,243,0.1)] border-l-[3px] border-[#2196f3] rounded text-[#90caf9] text-xs flex items-center gap-2.5 flex-shrink-0">
+                <span class="text-base">ℹ️</span>
+                <span>Private isolated sandbox • Your files persist during this session</span>
+            </div>
         </div>
     </div>
-    <div id="terminal" class="w-full bg-black rounded-lg overflow-hidden border border-gray-700"></div>
-    <div class="mt-4 flex gap-4">
-        <button id="clear-btn" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition">Clear Terminal</button>
-        <button id="reset-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Reset Session</button>
-    </div>
-    <p class="mt-2 text-sm text-gray-500 italic">This is a private, isolated sandbox for you to practice. Your files will persist during this session.</p>
 </div>
 
 <!-- xterm.js CSS -->
@@ -27,18 +82,38 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Initialize xterm.js
+        // Initialize xterm.js with LeetCode-style theme
         const term = new Terminal({
             cursorBlink: true,
             theme: {
-                background: '#1a1a1a',
-                foreground: '#f0f0f0',
-                cursor: '#f0f0f0',
-                selectionBackground: 'rgba(255, 255, 255, 0.3)'
+                background: '#1e1e1e',
+                foreground: '#d4d4d4',
+                cursor: '#aeafad',
+                cursorAccent: '#1e1e1e',
+                selectionBackground: 'rgba(255, 255, 255, 0.2)',
+                black: '#000000',
+                red: '#cd3131',
+                green: '#0dbc79',
+                yellow: '#e5e510',
+                blue: '#2472c8',
+                magenta: '#bc3fbc',
+                cyan: '#11a8cd',
+                white: '#e5e5e5',
+                brightBlack: '#666666',
+                brightRed: '#f14c4c',
+                brightGreen: '#23d18b',
+                brightYellow: '#f5f543',
+                brightBlue: '#3b8eea',
+                brightMagenta: '#d670d6',
+                brightCyan: '#29b8db',
+                brightWhite: '#e5e5e5'
             },
-            fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+            fontFamily: '"Cascadia Code", "Fira Code", "Consolas", "Monaco", "Courier New", monospace',
             fontSize: 14,
-            rows: 24
+            lineHeight: 1.2,
+            letterSpacing: 0,
+            scrollback: 10000,
+            allowTransparency: true
         });
 
         // Initialize Fit Addon
@@ -56,16 +131,16 @@
         const socket = new WebSocket(wsUrl);
 
         socket.onopen = () => {
-            statusElement.textContent = 'Connected';
-            statusElement.className = 'px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800';
+            statusElement.innerHTML = '<div class="w-2 h-2 rounded-full bg-current animate-pulse"></div><span>Connected</span>';
+            statusElement.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded bg-[rgba(76,175,80,0.15)] text-[#4caf50] border border-[rgba(76,175,80,0.3)] text-xs font-semibold transition-all';
             // Send a newline to trigger the prompt
             socket.send(JSON.stringify({ input: '\n' }));
         };
 
         socket.onclose = () => {
-            statusElement.textContent = 'Disconnected';
-            statusElement.className = 'px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800';
-            term.writeln('\r\n\x1b[1;31mConnection closed.\x1b[0m');
+            statusElement.innerHTML = '<div class="w-2 h-2 rounded-full bg-current animate-pulse"></div><span>Disconnected</span>';
+            statusElement.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded bg-[rgba(244,67,54,0.15)] text-[#f44336] border border-[rgba(244,67,54,0.3)] text-xs font-semibold transition-all';
+            term.writeln('\r\n\x1b[1;31m● Connection closed.\x1b[0m');
         };
 
         socket.onmessage = (event) => {
@@ -74,7 +149,7 @@
                 term.write(data.output);
             }
             if (data.error) {
-                term.writeln('\x1b[1;31mError: ' + data.error + '\x1b[0m');
+                term.writeln('\x1b[1;31m✗ Error: ' + data.error + '\x1b[0m');
             }
         };
 
@@ -100,4 +175,6 @@
         });
     });
 </script>
+</div>
+</body>
 {% endblock %}
