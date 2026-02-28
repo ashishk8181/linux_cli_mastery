@@ -16,11 +16,9 @@ def lesson_detail(request, module_slug, lesson_slug):
     user_progress_dict = {}
     if request.user.is_authenticated:
         user_progress = UserProgress.objects.filter(user=request.user, lesson=lesson).first()
-        # Get all user progress for sidebar
         all_progress = UserProgress.objects.filter(user=request.user, completed=True).values_list('lesson_id', flat=True)
         user_progress_dict = {lesson_id: True for lesson_id in all_progress}
     
-    # Get all modules with lessons
     all_modules = Module.objects.prefetch_related('lessons').all()
     
     # Get previous and next lessons
