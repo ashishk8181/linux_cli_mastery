@@ -1,32 +1,51 @@
-{% extends 'base_with_nav.html' %}
+{% extends 'base.html' %}
 
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="card">
-    <h2 class="text-2xl font-bold mb-6">Login</h2>
-    <form method="post" class="space-y-4">
-        {% csrf_token %}
-        <div>
-            <label class="block font-medium mb-1">Email</label>
-            <input type="email" name="email" required class="input-field">
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div class="bg-slate-800/50 border-b border-slate-700 p-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line>
+                </svg>
+                <a href="/" class="text-3xl font-bold hover:text-gray-300">Linux CLI Mastery</a>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="{% url 'terminal' %}" class="text-slate-300 hover:text-white transition">Terminal</a>
+                <a href="{% url 'module_list' %}" class="text-slate-300 hover:text-white transition">Learn</a>
+                <a href="{% url 'signup' %}" class="text-slate-300 hover:text-white transition">Sign Up</a>
+            </div>
         </div>
-        <div>
-            <label class="block font-medium mb-1">Password</label>
-            <input type="password" name="password" required class="input-field">
+    </div>
+    <div class="max-w-7xl mx-auto px-4 py-8 mt-8">
+        <div class="w-1/2 mx-auto bg-slate-800/50 border border-slate-700 p-8 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-6">Login</h2>
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label class="block font-medium mb-1">Email</label>
+                    <input type="email" name="email" required class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block font-medium mb-1">Password</label>
+                    <input type="password" name="password" required class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 font-medium w-full">Login</button>
+            </form>
+            
+            <div class="text-center text-gray-400 my-4">OR</div>
+            
+            <a href="{% url 'google_login' %}">
+                <button class="w-full flex items-center justify-center gap-3 bg-white text-gray-700 px-6 py-2 rounded-md hover:bg-gray-100 font-medium border border-slate-600">
+                    <img src="https://www.google.com/favicon.ico" alt="Google" class="w-5 h-5">
+                    <span>Continue with Google</span>
+                </button>
+            </a>
+            
+            <p class="mt-4 text-center text-gray-400">Don't have an account? <a href="{% url 'signup' %}" class="text-blue-400 hover:underline">Sign Up</a></p>
         </div>
-        <button type="submit" class="btn-primary">Login</button>
-    </form>
-    
-    <div class="text-center text-gray-500 my-4">OR</div>
-    
-    <a href="{% url 'google_login' %}">
-        <button class="btn-secondary">
-            <img src="https://www.google.com/favicon.ico" alt="Google" class="w-5 h-5">
-            <span>Continue with Google</span>
-        </button>
-    </a>
-    
-    <p class="mt-4 text-center">Don't have an account? <a href="{% url 'signup' %}" class="text-blue-500 hover:underline">Sign Up</a></p>
+    </div>
 </div>
 {% endblock %}

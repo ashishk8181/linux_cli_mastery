@@ -10,11 +10,10 @@
                     <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line>
                     </svg>
-                    <h1 class="text-3xl font-bold">Linux CLI Mastery</h1>
+                    <a href="/" class="text-3xl font-bold hover:text-gray-300">Linux CLI Mastery</a>
                 </div>
-                {% if user.is_authenticated %}
                 <a href="{% url 'terminal' %}" class="text-slate-300 hover:text-white transition">Terminal</a>
-                {% endif %}
+                <a href="{% url 'module_list' %}" class="text-slate-300 hover:text-white transition">Learn</a>
             </div>
             {% if user.is_authenticated %}
             <div class="relative group">
@@ -28,10 +27,15 @@
                 <div class="hidden group-hover:block absolute right-0 pt-2 z-50">
                     <div class="bg-white shadow-lg rounded-md min-w-[150px]">
                         <a href="{% url 'profile' %}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Profile</a>
-                        <a href="{% url 'logout' %}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100">Logout</a>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="block w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100">Logout</button>
+                        </form>
                     </div>
                 </div>
             </div>
+            {% else %}
+            <a href="{% url 'login' %}" class="text-slate-300 hover:text-white transition">Login</a>
             {% endif %}
         </div>
     </div>
@@ -124,11 +128,16 @@
                     </svg>
                     Examples
                 </button>
-                <button onclick="showTab('practice')" id="tab-practice" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg transition-all bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 hover:text-white">
+                <button onclick="{% if user.is_authenticated %}showTab('practice'){% else %}alert('Please login to access practice exercises'){% endif %}" id="tab-practice" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg transition-all bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 hover:text-white">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     Practice
+                    {% if not user.is_authenticated %}
+                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                    </svg>
+                    {% endif %}
                 </button>
             </div>
 
