@@ -18,6 +18,11 @@ pip install -r requirements.txt
 ./build-css.sh
 ```
 
+**Note**: After making changes to HTML templates with new Tailwind classes, rebuild CSS with:
+```bash
+./tailwindcss -i users/static/css/style.css -o users/static/css/output.css --minify
+```
+
 ### 3. Run Migrations
 
 ```bash
