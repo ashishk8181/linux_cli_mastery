@@ -16,10 +16,6 @@ media/
 staticfiles/
 .env
 
-# Migrations
-**/migrations/*
-!**/migrations/__init__.py
-
 # Tailwind
 tailwindcss
 
