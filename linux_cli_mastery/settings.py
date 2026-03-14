@@ -72,6 +72,17 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "linux_cli_mastery.urls"
 
+# Trusted origins for CSRF (most important fix)
+CSRF_TRUSTED_ORIGINS = [
+    'https://linux-cli-mastery.canadacentral.cloudapp.azure.com'
+    'http://linux-cli-mastery.canadacentral.cloudapp.azure.com'
+]
+# Tell Django it's behind a proxy serving HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+CSRF_COOKIE_SECURE = True       # Only send CSRF cookie over HTTPS
+SESSION_COOKIE_SECURE = True    # Only send session cookie over HTTPS
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
