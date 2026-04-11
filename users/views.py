@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import SignUpForm, ProfileUpdateForm
+from .models import User
 import requests
 from django.conf import settings
 
@@ -22,11 +23,14 @@ def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(request, username=email, password=password)
-        if user:
-            login(request, user)
-            return redirect('profile')
-        messages.error(request, 'Invalid credentials')
+        if not User.objects.filter(email=email).exists():
+            messages.error(request, 'No account found with this email.')
+        else:
+            user = authenticate(request, username=email, password=password)
+            if user:
+                login(request, user)
+                return redirect('profile')
+            messages.error(request, 'Incorrect password.')
     return render(request, 'users/login.html')
 
 def google_login(request):
