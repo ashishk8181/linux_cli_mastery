@@ -16,6 +16,9 @@ class SignUpForm(UserCreationForm):
             raise forms.ValidationError('An account with this email already exists.')
         return email
 
+    def clean_username(self):
+        return self.cleaned_data.get('email', '')
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.username = self.cleaned_data['email']
